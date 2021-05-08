@@ -136,14 +136,9 @@
   }
 
   .weather-icon {
-    /* position: relative; */
-    /* top: 5px;
-    left: 5px; */
     width: 3em;
     height: 3em;
     vertical-align: text-bottom;
-    /* background-color: rgba(255,255,255, 1);
-    border-radius: var(--border-radius); */
   }
 
   .subtitle {
@@ -157,6 +152,24 @@
   
   .icon-success {
     color: rgb(29, 153, 255);
+  }
+
+  .favorable {
+    border: 5px solid green ;
+    color: white;
+    background-color: green;
+  }
+
+  .moderate {
+    border: 5px solid yellow ;
+    color: black;
+    background-color: yellow;
+  }
+
+  .severe {
+    border: 5px solid red ;
+    color: white;
+    background-color: red;
   }
   
   /* CARDS */

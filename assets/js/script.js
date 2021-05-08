@@ -2,6 +2,7 @@ var openWeatherMapAPI = '41dcd9d8063f4abb3ee28c6c6fbc6354';
 var geocodeAPI ='423944751040149669013x70740';
 var citiesContainerEL = document.querySelector("#cities-container");
 var weatherContainerEL = document.querySelector("#weather-container");
+var forecastContainerEL = document.querySelector("#forecast-container");
 var cityFormEL = document.querySelector("#city-form");
 var cityTitleEL  = document.querySelector("#city-title");
 var cityNameEL = document.querySelector("#cityname");
@@ -13,6 +14,10 @@ var formSubmitHander = function(event) {
     In the case of submitting a form, it prevents the browser from sending the form's input data to a URL, 
     as we'll handle what happens with the form input data ourselves in JavaScript.
     */
+    weatherContainerEL.textContent = "";
+    cityTitleEL.textContent = "";
+    forecastContainerEL.textContent = "";
+
     var cityname = cityNameEL.value.trim();
     if (cityname) {
         // format city name - Capitalize first letter of word(s) in city name
@@ -33,8 +38,6 @@ cityFormEL.addEventListener("submit", formSubmitHander);
 
 
 var getCityCoordinates = function(city) {
-    weatherContainerEL.textContent = "";
-    cityTitleEL.textContent = "";
 
     var apiURL = "https://geocode.xyz/" + city + "?geoit=JSON&auth=" + geocodeAPI;
     console.log(apiURL);
@@ -63,6 +66,18 @@ var getCityCoordinates = function(city) {
         });
 };
 
+var getUVIndexColorClass = function(uvIndex) {
+    if (uvIndex < 3) {
+        return "favorable";
+    }
+    else if (uvIndex <8) {
+        return "moderate";
+    }
+    else {
+        return "severe";
+    }
+}
+
 var getCityWeather = function(lat, long, city) {
     // get current weather conditions for city
     // var apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=41dcd9d8063f4abb3ee28c6c6fbc6354";
@@ -85,31 +100,29 @@ var getCityWeather = function(lat, long, city) {
         });
 };
 
-var getCityForecast = function(city) {
-    // get five-day forecast for city
-    var apiURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&APPID=41dcd9d8063f4abb3ee28c6c6fbc6354";
-    fetch(apiURL)
-        .then(function(response) {
-            if (response.ok) {
-                response.json().then(function(data) {
-                    // console.log(data);
-                    displayForecast(data);
-                });
-            }
-            else {
-                alert("Unable to get forecast for " + city);
-            }
-        })
-        .catch(function(error) {
-            // 404 error returned
-            alert("Unable to connect to OpenWeatherMap.org");
-        });
-}
+// var getCityForecast = function(city) {
+//     // get five-day forecast for city
+//     var apiURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&APPID=41dcd9d8063f4abb3ee28c6c6fbc6354";
+//     fetch(apiURL)
+//         .then(function(response) {
+//             if (response.ok) {
+//                 response.json().then(function(data) {
+//                     // console.log(data);
+//                     displayForecast(data);
+//                 });
+//             }
+//             else {
+//                 alert("Unable to get forecast for " + city);
+//             }
+//         })
+//         .catch(function(error) {
+//             // 404 error returned
+//             alert("Unable to connect to OpenWeatherMap.org");
+//         });
+// }
 
 var displayWeather = function(city, data) {
     console.log(data);
-    // weatherContainerEL.textContent = "";
-    // cityTitleEL.textContent = "";
 
     // check if api returned forecast
     if (data.length === 0) {
@@ -126,8 +139,8 @@ var displayWeather = function(city, data) {
     var yyyy = today.getFullYear();
 
     today = mm + '/' + dd + '/' + yyyy;
-    console.log(today);
-    console.log(data.current.weather[0].icon);
+    // console.log(today);
+    // console.log(data.current.weather[0].icon);
     // citySearchTerm.textContent = city + ' (' + today + ') ' 
     var cityHeading = document.createElement('h1');
     cityHeading.textContent = city + ' (' + today + ') ' ;
@@ -137,11 +150,9 @@ var displayWeather = function(city, data) {
     var iconURL = 'http://openweathermap.org/img/wn/' + data.current.weather[0].icon + '@2x.png';
     weatherImage.setAttribute("src", iconURL);
     weatherImage.setAttribute("class", "weather-icon");
-    console.log(iconURL);
-    // cityHeading.appendChild(weatherImage);
+    // console.log(iconURL);
     cityTitleEL.appendChild(cityHeading);
     cityTitleEL.appendChild(weatherImage);
-    // weatherIcon.innerHTML = icon;
 
     //temperature
     var currentTemperatureEL = document.createElement("p");
@@ -156,29 +167,52 @@ var displayWeather = function(city, data) {
     cityTitleEL.appendChild(currentWindEL);
 
     // humidity
-    var currentHumidity = document.createElement('p');
-    currentHumidity.textContent = "Humidity: " + data.current.humidity + ' %';
-    cityTitleEL.appendChild(currentHumidity);
+    var currentHumidityEL = document.createElement('p');
+    currentHumidityEL.textContent = "Humidity: " + data.current.humidity + ' %';
+    cityTitleEL.appendChild(currentHumidityEL);
 
     // uv index
-    var currentUV = document.createElement('p');
-    currentUV.textContent = "UV Index: " + data.current.uvi;
-    cityTitleEL.appendChild(currentUV);
+    var currentUVDiv = document.createElement('div');
+    var currentUV = data.current.uvi;
+    var currentUVEL = document.createElement('label');
+    var currentUVLevelEL = document.createElement('label');
+    currentUVEL.textContent = "UV Index: "
+    currentUVLevelEL.textContent = currentUV;
+    currentUVLevelEL.setAttribute("class", getUVIndexColorClass(currentUV));
+    currentUVLevelEL.setAttribute("padding", "5px");
+    currentUVDiv.appendChild(currentUVEL);
+    currentUVDiv.appendChild(currentUVLevelEL);
+    cityTitleEL.appendChild(currentUVDiv);
+    cityTitleEL.appendChild(document.createElement("p"));
 
+    displayForecast(data);
 }
 
-var displayForecast = function(forecast) {
-    console.log(forecast);
-    weatherContainerEL.textContent = "";
+var displayForecast = function(data) {
+    // console.log(data);
+    forecastContainerEL.textContent = "";
 
     // check if api returned forecast
-    if (forecast.length === 0) {
-        weatherContainerEL.textContent = "No forecast found";
+    if (data.length === 0) {
+        forecastContainerEL.textContent = "No forecast found";
         return;
     }
 
-    // loop through 5-day forecast
+    // loop through 5-day forecast in daily array
+    var dailyArr = data.daily;
+    // console.log(dailyArr);
+    for (var i = 0; i< 5; i++) {
+        console.log(dailyArr[i]);
+        // get date
+        var date = dailyArr[i].dt;
+        var convertedDate = new Date(date * 1000).toLocaleString();
+        console.log(date);
 
+        // var randomFormat = 'MM/DD/YYYY';
+        // var convertedForecastDate = moment(convertedDate, randomFormat);
+        // console.log(convertedDate.format('MM/DD/YYYY'));
+
+    }
 }
 
 getCityCoordinates("Indianapolis");
