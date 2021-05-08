@@ -7,6 +7,9 @@ var cityFormEL = document.querySelector("#city-form");
 var cityTitleEL  = document.querySelector("#city-title");
 var cityNameEL = document.querySelector("#cityname");
 var fiveDayForecastEL = document.querySelector("#five-day-forecast");
+var cityHistoryEL = document.querySelector("#cities-container");
+
+var list = JSON.parse(localStorage.getItem('weathercities')) || []; //Short-circuit evaluation
 
 var formSubmitHander = function(event) {
     event.preventDefault();
@@ -28,6 +31,7 @@ var formSubmitHander = function(event) {
             cityWords[i] = cityWords[i].charAt(0).toUpperCase() + cityWords[i].substring(1);
         }
         cityname = cityWords.join(' ');
+        saveCityHistory(cityname);
         getCityCoordinates(cityname);
         cityNameEL.value = '';
     }
@@ -272,4 +276,68 @@ var displayForecast = function(data) {
     forecastContainerEL.appendChild(containerEL);
 }
 
+var saveCityHistory = function(city) {
+    cityHistoryEL.textContent = "";
+    var list = JSON.parse(localStorage.getItem('weathercities')) || []; //Short-circuit evaluation
+
+    var n = list.includes(city);
+
+    if (n === false) {
+        list.push(city);
+      // Save the to-dos into localStorage
+        // We need to use JSON.stringify to turn the list from an array into a string
+        localStorage.setItem('weathercities', JSON.stringify(list));
+    }
+
+    getSavedCities(list);
+
+    // Clear the textbox when done using `.val()`
+    $('#cityname').val('');
+}
+
+
+getSavedCities = function(list) {
+
+     // Iterates over the 'list'
+     for (var i = 0; i < list.length; i++) {
+        // Creates a new variable 'toDoItem' that will hold a "<p>" tag
+        // Sets the `list` item's value as text of this <p> element
+        var cityItem = $('<p>');
+        // cityItem.text(list[i]);
+
+        // Creates a button `toDoClose` with an attribute called `data-to-do` and a unique `id`
+        var citySearch = $('<button>');
+        citySearch.attr('data-city', i);
+
+        // Gives the button a class 
+        citySearch.addClass('button');
+
+        // Adds a checkmark symbol as its text value
+        citySearch.text(list[i]);
+
+        // Adds the button to the `toDoItem`
+        cityItem = cityItem.prepend(citySearch);
+
+        // Adds 'cityItem' to the City History List div
+        $('#cities-container').append(cityItem);
+      }
+}
+
+// City history search
+$(document).on('click', '.button', function() {
+    weatherContainerEL.textContent = "";
+    cityTitleEL.textContent = "";
+    forecastContainerEL.textContent = "";
+    fiveDayForecastEL.textContent = "";
+    // Get the `id` of the button from its data attribute and hold in a variable called 'getCity' (array item index)
+    //this refers to the function invoked by the click event.
+    var getCity = $(this).attr('data-city');
+    console.log(getCity);
+    console.log(list[getCity]);
+
+    getCityCoordinates(list[getCity]);
+
+  });
+
 getCityCoordinates("Indianapolis");
+getSavedCities(list);
