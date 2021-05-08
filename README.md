@@ -3,6 +3,8 @@
 ## Description
 This application allows the user to search for any city to retrieve the current weather and a 5-day forecast.
 
+![weather dashboard screen shot](https://github.com/chuckrfields/weather-dashboard/blob/main/assets/WeatherDashboardChuck.png)
+
 ## User Story
 AS A traveler
 I WANT to see the weather outlook for multiple cities
