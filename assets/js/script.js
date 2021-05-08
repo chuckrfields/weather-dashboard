@@ -6,6 +6,7 @@ var forecastContainerEL = document.querySelector("#forecast-container");
 var cityFormEL = document.querySelector("#city-form");
 var cityTitleEL  = document.querySelector("#city-title");
 var cityNameEL = document.querySelector("#cityname");
+var fiveDayForecastEL = document.querySelector("#five-day-forecast");
 
 var formSubmitHander = function(event) {
     event.preventDefault();
@@ -17,6 +18,7 @@ var formSubmitHander = function(event) {
     weatherContainerEL.textContent = "";
     cityTitleEL.textContent = "";
     forecastContainerEL.textContent = "";
+    fiveDayForecastEL.textContent = "";
 
     var cityname = cityNameEL.value.trim();
     if (cityname) {
@@ -202,6 +204,7 @@ var displayForecast = function(data) {
         return;
     }
 
+    fiveDayForecastEL.textContent = "5-Day Forecast:"
     // loop through 5-day forecast in daily array
     var dailyArr = data.daily;
     // console.log(dailyArr);
