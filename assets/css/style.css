@@ -172,20 +172,15 @@
     background-color: red;
   }
   
-  /* CARDS */
-  .card {
-    margin: 0 0 20px 0;
-    border: 3px none;
-    border-radius: var(--border-radius);
-  }
-  
   .card-header {
-    color: black;
-    padding: 1%;
+    font-size: larger;
+    font-weight: bold;
   }
-  
-  .card-body {
-    padding: 2.5%;
+
+  .card-header-search {
+    font-size: xx-large;
+    color: black;
+    font-weight: bold;
   }
   
   /* FORM */

@@ -191,6 +191,10 @@ var displayWeather = function(city, data) {
 var displayForecast = function(data) {
     // console.log(data);
     forecastContainerEL.textContent = "";
+    var containerEL = document.createElement("div");
+    containerEL.setAttribute("class", "container");
+    var rowEL = document.createElement("div");
+    rowEL.setAttribute("class", "row");
 
     // check if api returned forecast
     if (data.length === 0) {
@@ -206,13 +210,63 @@ var displayForecast = function(data) {
         // get date
         var date = dailyArr[i].dt;
         var convertedDate = new Date(date * 1000).toLocaleString();
-        console.log(date);
+        // console.log(date);
 
-        // var randomFormat = 'MM/DD/YYYY';
-        // var convertedForecastDate = moment(convertedDate, randomFormat);
-        // console.log(convertedDate.format('MM/DD/YYYY'));
+        var randomFormat = 'MM/DD/YYYY';
+        var convertedForecastDate = moment(convertedDate, randomFormat);
+        console.log(convertedForecastDate.format('MM/DD/YYYY'));
 
+        console.log(dailyArr[i].weather[0].icon);
+
+        //forecastContainerEL
+
+        var colEL = document.createElement("div");
+        colEL.setAttribute("class", "col col-md-2.5");
+        var cardEL = document.createElement("div");
+        cardEL.classList = "card text-white bg-secondary mb-3";
+        var cardHeaderEL = document.createElement("div");
+        cardHeaderEL.setAttribute("class", "card-header");
+        cardHeaderEL.textContent = convertedForecastDate.format('MM/DD/YYYY');
+
+        var cardBodyEL = document.createElement("div");
+        cardBodyEL.setAttribute("class", "card-body");
+
+        //icon
+        var weatherImage = document.createElement("img");
+        var iconURL = 'http://openweathermap.org/img/wn/' + dailyArr[i].weather[0].icon + '@2x.png';
+        weatherImage.setAttribute("src", iconURL);
+        weatherImage.setAttribute("class", "weather-icon");
+        // console.log(iconURL);
+        cardBodyEL.appendChild(weatherImage);
+
+        //temperature
+        var forecastTemperatureEL = document.createElement("p");
+        var tempKelvin = dailyArr[i].temp.day;
+        var forecastTempF = (tempKelvin - 273.15) * (9/5) + 32;
+        forecastTemperatureEL.textContent = "Temp: " + forecastTempF.toFixed(2) + "˚ F";
+        cardBodyEL.appendChild(forecastTemperatureEL);
+
+        // wind
+        var forecastWindEL = document.createElement("p");
+        var windSpeed = dailyArr[i].wind_speed; 
+        forecastWindEL.textContent = "Wind: " + windSpeed.toFixed(2) + ' MPH';
+        cardBodyEL.appendChild(forecastWindEL);
+
+         // humidity
+        var forecastHumidityEL = document.createElement('p');
+        forecastHumidityEL.textContent = "Humidity: " + dailyArr[i].humidity + ' %';
+        cardBodyEL.appendChild(forecastHumidityEL);
+
+        cardEL.appendChild(cardHeaderEL);
+        cardEL.appendChild(cardBodyEL);
+        colEL.appendChild(cardEL);
+
+        rowEL.appendChild(colEL);
     }
+    
+    containerEL.appendChild(rowEL);
+
+    forecastContainerEL.appendChild(containerEL);
 }
 
 getCityCoordinates("Indianapolis");
