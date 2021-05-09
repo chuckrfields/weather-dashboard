@@ -46,12 +46,12 @@ cityFormEL.addEventListener("submit", formSubmitHander);
 var getCityCoordinates = function(city) {
 
     var apiURL = "https://geocode.xyz/" + city + "?geoit=JSON&auth=" + geocodeAPI;
-    console.log(apiURL);
+    // console.log(apiURL);
     fetch(apiURL)
         .then(function(response) {
             if (response.ok) {
                 response.json().then(function(data) {
-                     console.log(data);
+                    //  console.log(data);
                     var lat = data.latt;
                     var long = data.longt;
 
@@ -128,7 +128,7 @@ var getCityWeather = function(lat, long, city) {
 // }
 
 var displayWeather = function(city, data) {
-    console.log(data);
+    // console.log(data);
 
     // check if api returned forecast
     if (data.length === 0) {
@@ -213,7 +213,7 @@ var displayForecast = function(data) {
     var dailyArr = data.daily;
     // console.log(dailyArr);
     for (var i = 0; i< 5; i++) {
-        console.log(dailyArr[i]);
+        // console.log(dailyArr[i]);
         // get date
         var date = dailyArr[i].dt;
         var convertedDate = new Date(date * 1000).toLocaleString();
@@ -221,10 +221,8 @@ var displayForecast = function(data) {
 
         var randomFormat = 'MM/DD/YYYY';
         var convertedForecastDate = moment(convertedDate, randomFormat);
-        console.log(convertedForecastDate.format('MM/DD/YYYY'));
-
-        console.log(dailyArr[i].weather[0].icon);
-
+        // console.log(convertedForecastDate.format('MM/DD/YYYY'));
+        // console.log(dailyArr[i].weather[0].icon);
         //forecastContainerEL
 
         var colEL = document.createElement("div");
@@ -283,8 +281,9 @@ var saveCityHistory = function(city) {
     var n = list.includes(city);
 
     if (n === false) {
+        console.log("saving new city " + city)
         list.push(city);
-      // Save the to-dos into localStorage
+        // Save the city into localStorage
         // We need to use JSON.stringify to turn the list from an array into a string
         localStorage.setItem('weathercities', JSON.stringify(list));
     }
@@ -292,7 +291,7 @@ var saveCityHistory = function(city) {
     getSavedCities(list);
 
     // Clear the textbox when done using `.val()`
-    $('#cityname').val('');
+    // $('#cityname').val('');
 }
 
 
@@ -300,23 +299,23 @@ getSavedCities = function(list) {
 
      // Iterates over the 'list'
      for (var i = 0; i < list.length; i++) {
-        // Creates a new variable 'toDoItem' that will hold a "<p>" tag
+        // Creates a new variable 'cityItem' that will hold a "<p>" tag
         // Sets the `list` item's value as text of this <p> element
         var cityItem = $('<p>');
         // cityItem.text(list[i]);
 
-        // Creates a button `toDoClose` with an attribute called `data-to-do` and a unique `id`
-        var citySearch = $('<button>');
-        citySearch.attr('data-city', i);
+        // Creates a button `citySearchBtn` with an attribute called `data-city and a unique `id`
+        var citySearchBtn = $('<button>');
+        citySearchBtn.attr('data-city', i);
 
         // Gives the button a class 
-        citySearch.addClass('button');
+        citySearchBtn.addClass('button');
 
-        // Adds a checkmark symbol as its text value
-        citySearch.text(list[i]);
+        // Adds text value to button for city
+        citySearchBtn.text(list[i]);
 
-        // Adds the button to the `toDoItem`
-        cityItem = cityItem.prepend(citySearch);
+        // Adds the button to the `cityItem`
+        cityItem = cityItem.prepend(citySearchBtn);
 
         // Adds 'cityItem' to the City History List div
         $('#cities-container').append(cityItem);
@@ -333,7 +332,10 @@ $(document).on('click', '.button', function() {
     //this refers to the function invoked by the click event.
     var getCity = $(this).attr('data-city');
     console.log(getCity);
-    console.log(list[getCity]);
+
+    var list = JSON.parse(localStorage.getItem('weathercities')) || []; //Short-circuit evaluation
+    // console.log(list);
+    // console.log(list[getCity]);
 
     getCityCoordinates(list[getCity]);
 
