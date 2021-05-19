@@ -1,5 +1,4 @@
 var openWeatherMapAPI = '41dcd9d8063f4abb3ee28c6c6fbc6354';
-var geocodeAPI ='423944751040149669013x70740';
 var citiesContainerEL = document.querySelector("#cities-container");
 var weatherContainerEL = document.querySelector("#weather-container");
 var forecastContainerEL = document.querySelector("#forecast-container");
@@ -45,15 +44,17 @@ cityFormEL.addEventListener("submit", formSubmitHander);
 
 var getCityCoordinates = function(city) {
 
-    var apiURL = "https://geocode.xyz/" + city + "?geoit=JSON&auth=" + geocodeAPI;
+    var apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + openWeatherMapAPI;
     // console.log(apiURL);
     fetch(apiURL)
         .then(function(response) {
             if (response.ok) {
                 response.json().then(function(data) {
-                    //  console.log(data);
-                    var lat = data.latt;
-                    var long = data.longt;
+                    // console.log(data);
+                    var lat = data.coord.lat;
+                    var long = data.coord.lon;
+                    // console.log(lat);
+                    // console.log(long);
 
                     if (lat == "0.00000" && long == "0.00000") {
                         alert(city + " not found!");
@@ -86,7 +87,6 @@ var getUVIndexColorClass = function(uvIndex) {
 
 var getCityWeather = function(lat, long, city) {
     // get current weather conditions for city
-    // var apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=41dcd9d8063f4abb3ee28c6c6fbc6354";
     var apiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long + "&APPID=" + openWeatherMapAPI;
     fetch(apiURL)
         .then(function(response) {
@@ -105,27 +105,6 @@ var getCityWeather = function(lat, long, city) {
             alert("Unable to connect to OpenWeatherMap.org");
         });
 };
-
-// var getCityForecast = function(city) {
-//     // get five-day forecast for city
-//     var apiURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&APPID=41dcd9d8063f4abb3ee28c6c6fbc6354";
-//     fetch(apiURL)
-//         .then(function(response) {
-//             if (response.ok) {
-//                 response.json().then(function(data) {
-//                     // console.log(data);
-//                     displayForecast(data);
-//                 });
-//             }
-//             else {
-//                 alert("Unable to get forecast for " + city);
-//             }
-//         })
-//         .catch(function(error) {
-//             // 404 error returned
-//             alert("Unable to connect to OpenWeatherMap.org");
-//         });
-// }
 
 var displayWeather = function(city, data) {
     // console.log(data);
@@ -324,6 +303,7 @@ getSavedCities = function(list) {
 
 // City history search
 $(document).on('click', '.button', function() {
+    console.log('testing button click')
     weatherContainerEL.textContent = "";
     cityTitleEL.textContent = "";
     forecastContainerEL.textContent = "";
